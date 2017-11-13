@@ -39,8 +39,8 @@ body {
 		
 			//  We need this because the assets are on github pages
 			//  Remove the next 2 lines if running locally
-			this.load.baseURL = 'https://psarrask.github.io/Super-Mario/';
-			this.load.crossOrigin = 'anonymous';
+			//this.load.baseURL = 'https://psarrask.github.io/Super-Mario/';
+			//this.load.crossOrigin = 'anonymous';
 
 			this.load.tilemap('level', 'assets/crash_final_level.json', null, Phaser.Tilemap.TILED_JSON);
 			
@@ -113,15 +113,12 @@ body {
 			fruiticon = game.add.image(50, 2, 'fruiti');
 			fruitnumberD = game.add.sprite(74, 6, 'number', fruitcount);
 			fruitnumberM = game.add.sprite(90, 6, 'number', fruitcount);
-			TFP = game.add.sprite(338, 75, 'tfp');
 			//boxicon = game.add.image(11, 2, 'boxi');
 			lifeicon.fixedToCamera = true;
 			lifenumber.fixedToCamera = true;
 			fruiticon.fixedToCamera = true;
 			fruitnumberD.fixedToCamera = true;
 			fruitnumberM.fixedToCamera = true;
-			TFP.fixedToCamera = true;
-			TFP.visible = false;
 			//boxicon.fixedToCamera = true;
 
 			coins = game.add.group();
@@ -180,6 +177,10 @@ body {
 
 			cursors = game.input.keyboard.createCursorKeys();
 
+			TFP = game.add.sprite(338, 75, 'tfp');
+			TFP.fixedToCamera = true;
+			TFP.visible = false;
+			
 			if (!game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
 			
 		}
@@ -375,6 +376,7 @@ body {
 						}
 						else{
 							updateScoreBoard();
+							TFP.visible = true;
 							game.paused = true;
 						}
 					});
