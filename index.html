@@ -30,20 +30,17 @@ body {
 		blinktimes = 0;
 		var fmask = null;
 		
+		var mobilecheck = false;
 		var leftpress = false;
 		var rightpress = false;
 		var jumppress = false;
 		
 		function preload() {
 		
-			this.load.spritesheet('buttonL', 'assets/arrowL.png', 25, 25);
-			this.load.spritesheet('buttonR', 'assets/arrowR.png', 25, 25);
-			this.load.spritesheet('buttonJ', 'assets/keyX.png', 25, 25);
-
 			//  We need this because the assets are on github pages
 			//  Remove the next 2 lines if running locally
-			this.load.baseURL = 'https://psarrask.github.io/Super-Mario/';
-			this.load.crossOrigin = 'anonymous';
+			//this.load.baseURL = 'https://psarrask.github.io/Super-Mario/';
+			//this.load.crossOrigin = 'anonymous';
 
 			this.load.tilemap('level', 'assets/crash_final_level.json', null, Phaser.Tilemap.TILED_JSON);
 			
@@ -60,6 +57,10 @@ body {
 			this.load.image('boxi', 'assets/boxicon.png');
 			this.load.image('tfp', 'assets/tfp.png');
 			
+			this.load.spritesheet('buttonL', 'assets/arrowL.png', 51, 51);
+			this.load.spritesheet('buttonR', 'assets/arrowR.png', 51, 51);
+			this.load.spritesheet('buttonJ', 'assets/keyX.png', 51, 51);
+			
 			this.load.audio('death', 'audio/cdeath.mp3');
 			this.load.audio('fruit', 'audio/cfruit.mp3');
 			this.load.audio('jump', 'audio/cjump.mp3');
@@ -74,10 +75,7 @@ body {
 			
 		}
 
-		
 		function create() {
-			
-			if (!game.device.desktop){ game.input.onDown.add(mobile, this); } //go fullscreen and add buttons on mobile devices
 			
 			Death = game.add.audio('death');
 			Fruit = game.add.audio('fruit');
@@ -115,7 +113,7 @@ body {
 			fruiticon = game.add.image(50, 2, 'fruiti');
 			fruitnumberD = game.add.sprite(74, 6, 'number', fruitcount);
 			fruitnumberM = game.add.sprite(90, 6, 'number', fruitcount);
-			TFP = game.add.sprite(45, 90, 'tfp');
+			TFP = game.add.sprite(338, 75, 'tfp');
 			//boxicon = game.add.image(11, 2, 'boxi');
 			lifeicon.fixedToCamera = true;
 			lifenumber.fixedToCamera = true;
@@ -181,23 +179,22 @@ body {
 			game.camera.follow(player);
 
 			cursors = game.input.keyboard.createCursorKeys();
+
+			if (game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
 			
-			
-			
-			//game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
-			//game.scale.fullScreenScaleMode = Phaser.ScaleManager.NO_SCALE;
 		}
 		
 		function mobile() { 
-			game.scale.startFullScreen(false);
+			mobilecheck = true;
+			//game.scale.startFullScreen(false);
 			
-			buttonL = game.add.button(15, game.world.height/2, 'buttonL', null, this, 0, 1, 0, 1);
+			buttonL = game.add.button(0, game.world.height/2, 'buttonL', null, this, 0, 1, 0, 1);
 			//buttonL.events.onInputOver.add(function(){leftpress=true;});
 			//buttonL.events.onInputOut.add(function(){leftpress=false;});
 			buttonL.events.onInputDown.add(function(){leftpress=true;});
 			buttonL.events.onInputUp.add(function(){leftpress=false;});
 			buttonL.fixedToCamera = true;
-			buttonR = game.add.button(50, game.world.height/2, 'buttonR', null, this, 0, 1, 0, 1);
+			buttonR = game.add.button(52, game.world.height/2, 'buttonR', null, this, 0, 1, 0, 1);
 			//buttonR.events.onInputOver.add(function(){rightpress=true;});
 			//buttonR.events.onInputOut.add(function(){rightpress=false;});
 			buttonR.events.onInputDown.add(function(){rightpress=true;});
@@ -233,11 +230,9 @@ body {
 				} else {
 					//player.animations.stop();
 					if (player.goesRight){
-						//player.frame = 0;
 						player.animations.play('idleRight');
 					}
 					else{
-						//player.frame = 7;
 						player.animations.play('idleLeft');
 					}
 				}
