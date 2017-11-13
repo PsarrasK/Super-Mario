@@ -14,7 +14,7 @@ body {
 </head>
 <body>
 	<script type="text/javascript">
-		var game = new Phaser.Game(336, 272, Phaser.CANVAS, '', {
+		var game = new Phaser.Game(600, 272, Phaser.CANVAS, '', {
 			preload : preload,
 			create : create,
 			update : update,
@@ -30,7 +30,15 @@ body {
 		blinktimes = 0;
 		var fmask = null;
 		
+		var leftpress = false;
+		var rightpress = false;
+		var jumppress = false;
+		
 		function preload() {
+		
+			this.load.spritesheet('buttonL', 'assets/arrowL.png', 25, 25);
+			this.load.spritesheet('buttonR', 'assets/arrowR.png', 25, 25);
+			this.load.spritesheet('buttonJ', 'assets/keyX.png', 25, 25);
 
 			//  We need this because the assets are on github pages
 			//  Remove the next 2 lines if running locally
@@ -66,7 +74,10 @@ body {
 			
 		}
 
+		
 		function create() {
+			
+			if (!game.device.desktop){ game.input.onDown.add(mobile, this); } //go fullscreen and add buttons on mobile devices
 			
 			Death = game.add.audio('death');
 			Fruit = game.add.audio('fruit');
@@ -121,8 +132,8 @@ body {
 			coins.callAll('animations.add', 'animations', 'spin', [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ], 7, true);
 			coins.callAll('animations.play', 'animations', 'spin');
 			//  The coins will need to be offset by 6px to put them back in the middle of the grid
-            coins.setAll('x', 3, false, false, 1);
-            coins.setAll('y', 3, false, false, 1);
+			coins.setAll('x', 3, false, false, 1);
+			coins.setAll('y', 3, false, false, 1);
 			
 			pcrystals = game.add.group();
 			pcrystals.enableBody = true;
@@ -130,7 +141,7 @@ body {
 			pcrystals.callAll('animations.add', 'animations', 'pcspin', [ 0, 1, 2, 3, 4, 5, 6, 7 ], 7, true);
 			pcrystals.callAll('animations.play', 'animations', 'pcspin');
 			//  The purple crystals will need to be offset by 6px to put them back in the middle of the grid
-            pcrystals.setAll('x', 4, false, false, 1);
+			pcrystals.setAll('x', 4, false, false, 1);
 
 			goombas = game.add.group();
 			goombas.enableBody = true;
@@ -170,6 +181,34 @@ body {
 			game.camera.follow(player);
 
 			cursors = game.input.keyboard.createCursorKeys();
+			
+			
+			
+			//game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
+			//game.scale.fullScreenScaleMode = Phaser.ScaleManager.NO_SCALE;
+		}
+		
+		function mobile() { 
+			game.scale.startFullScreen(false);
+			
+			buttonL = game.add.button(15, game.world.height/2, 'buttonL', null, this, 0, 1, 0, 1);
+			//buttonL.events.onInputOver.add(function(){leftpress=true;});
+			//buttonL.events.onInputOut.add(function(){leftpress=false;});
+			buttonL.events.onInputDown.add(function(){leftpress=true;});
+			buttonL.events.onInputUp.add(function(){leftpress=false;});
+			buttonL.fixedToCamera = true;
+			buttonR = game.add.button(50, game.world.height/2, 'buttonR', null, this, 0, 1, 0, 1);
+			//buttonR.events.onInputOver.add(function(){rightpress=true;});
+			//buttonR.events.onInputOut.add(function(){rightpress=false;});
+			buttonR.events.onInputDown.add(function(){rightpress=true;});
+			buttonR.events.onInputUp.add(function(){rightpress=false;});
+			buttonR.fixedToCamera = true;
+			buttonJ = game.add.button(550, game.world.height/2, 'buttonJ', null, this, 0, 1, 0, 1);
+			//buttonJ.events.onInputOver.add(function(){jumppress=true;});
+			//buttonJ.events.onInputOut.add(function(){jumppress=false;});
+			buttonJ.events.onInputDown.add(function(){jumppress=true;});
+			buttonJ.events.onInputUp.add(function(){jumppress=false;});
+			buttonJ.fixedToCamera = true;
 		}
 
 		function update() {
@@ -183,11 +222,11 @@ body {
 			if (isDead == false && finished == false) {
 				player.body.velocity.x = 0;
 				checkMask();
-				if (cursors.left.isDown) {
+				if (leftpress || cursors.left.isDown) {
 					player.body.velocity.x = -90;
 					player.animations.play('walkLeft');
 					player.goesRight = false;
-				} else if (cursors.right.isDown) {
+				} else if (rightpress || cursors.right.isDown) {
 					player.body.velocity.x = 90;
 					player.animations.play('walkRight');
 					player.goesRight = true;
@@ -208,7 +247,7 @@ body {
 					justlanded = true;
 				}
 
-				if (cursors.up.isDown && player.body.onFloor()) {
+				if (jumppress && player.body.onFloor() || cursors.up.isDown && player.body.onFloor()) {
 					player.body.velocity.y = -193;
 					Jump.play();
 				}
@@ -270,7 +309,7 @@ body {
 				checkMask();
 				//maskbox.body.enable = false;
 			}
-			if (player.body.touching.down && cursors.up.isDown){
+			if (jumppress && player.body.touching.down || player.body.touching.down && cursors.up.isDown){
 				player.body.velocity.y = -193;
 				Jump.play();
 			}	
