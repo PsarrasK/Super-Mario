@@ -39,8 +39,8 @@ body {
 		
 			//  We need this because the assets are on github pages
 			//  Remove the next 2 lines if running locally
-			//this.load.baseURL = 'https://psarrask.github.io/Super-Mario/';
-			//this.load.crossOrigin = 'anonymous';
+			this.load.baseURL = 'https://psarrask.github.io/Super-Mario/';
+			this.load.crossOrigin = 'anonymous';
 
 			this.load.tilemap('level', 'assets/crash_final_level.json', null, Phaser.Tilemap.TILED_JSON);
 			
@@ -57,9 +57,9 @@ body {
 			this.load.image('boxi', 'assets/boxicon.png');
 			this.load.image('tfp', 'assets/tfp.png');
 			
-			this.load.spritesheet('buttonL', 'assets/arrowL.png', 51, 51);
-			this.load.spritesheet('buttonR', 'assets/arrowR.png', 51, 51);
-			this.load.spritesheet('buttonJ', 'assets/keyX.png', 51, 51);
+			this.load.spritesheet('buttonL', 'assets/buttons/buttonL.png', 52, 52);
+			this.load.spritesheet('buttonR', 'assets/buttons/buttonR.png', 52, 52);
+			this.load.spritesheet('buttonJ', 'assets/buttons/buttonX.png', 52, 52);
 			
 			this.load.audio('death', 'audio/cdeath.mp3');
 			this.load.audio('fruit', 'audio/cfruit.mp3');
@@ -108,11 +108,11 @@ body {
 			layer = map.createLayer('solid');
 			layer.resizeWorld();
 			
-			lifeicon = game.add.image(1, 1, 'lifei');
-			lifenumber = game.add.sprite(28, 6, 'number', lifecount);
-			fruiticon = game.add.image(50, 2, 'fruiti');
-			fruitnumberD = game.add.sprite(74, 6, 'number', fruitcount);
-			fruitnumberM = game.add.sprite(90, 6, 'number', fruitcount);
+			lifeicon = game.add.image(5, 1, 'lifei');
+			lifenumber = game.add.sprite(32, 6, 'number', lifecount);
+			fruiticon = game.add.image(60, 2, 'fruiti');
+			fruitnumberD = game.add.sprite(84, 6, 'number', fruitcount);
+			fruitnumberM = game.add.sprite(100, 6, 'number', fruitcount);
 			//boxicon = game.add.image(11, 2, 'boxi');
 			lifeicon.fixedToCamera = true;
 			lifenumber.fixedToCamera = true;
@@ -189,19 +189,19 @@ body {
 			mobilecheck = true;
 			//game.scale.startFullScreen(false);
 			
-			buttonL = game.add.button(0, game.world.height/2, 'buttonL', null, this, 0, 1, 0, 1);
+			buttonL = game.add.button(5, 40, 'buttonL', null, this, 0, 1, 0, 1);
 			//buttonL.events.onInputOver.add(function(){leftpress=true;});
 			//buttonL.events.onInputOut.add(function(){leftpress=false;});
 			buttonL.events.onInputDown.add(function(){leftpress=true;});
 			buttonL.events.onInputUp.add(function(){leftpress=false;});
 			buttonL.fixedToCamera = true;
-			buttonR = game.add.button(52, game.world.height/2, 'buttonR', null, this, 0, 1, 0, 1);
+			buttonR = game.add.button(62, 40, 'buttonR', null, this, 0, 1, 0, 1);
 			//buttonR.events.onInputOver.add(function(){rightpress=true;});
 			//buttonR.events.onInputOut.add(function(){rightpress=false;});
 			buttonR.events.onInputDown.add(function(){rightpress=true;});
 			buttonR.events.onInputUp.add(function(){rightpress=false;});
 			buttonR.fixedToCamera = true;
-			buttonJ = game.add.button(550, game.world.height/2, 'buttonJ', null, this, 0, 1, 0, 1);
+			buttonJ = game.add.button(543, 40, 'buttonJ', null, this, 0, 1, 0, 1);
 			//buttonJ.events.onInputOver.add(function(){jumppress=true;});
 			//buttonJ.events.onInputOut.add(function(){jumppress=false;});
 			buttonJ.events.onInputDown.add(function(){jumppress=true;});
