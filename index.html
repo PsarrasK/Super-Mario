@@ -14,7 +14,8 @@ body {
 </head>
 <body>
 	<script type="text/javascript">
-		var game = new Phaser.Game(600, 272, Phaser.CANVAS, '', {
+		var Wwidth=600;
+		var game = new Phaser.Game(Wwidth, 272, Phaser.CANVAS, '', {
 			preload : preload,
 			create : create,
 			update : update,
@@ -29,10 +30,12 @@ body {
 		masked = false;
 		blinktimes = 0;
 		var fmask = null;
+		OK = false;
 		
 		var mobilecheck = false;
 		var leftpress = false;
 		var rightpress = false;
+		var downpress = false;
 		var jumppress = false;
 		
 		function preload() {
@@ -44,21 +47,27 @@ body {
 
 			this.load.tilemap('level', 'assets/crash_final_level.json', null, Phaser.Tilemap.TILED_JSON);
 			
+			this.load.spritesheet('pl1', 'assets/pl1.png', 156, 15);
 			this.load.spritesheet('tiles', 'assets/super_mario_tiles.png', 16, 16);
 			this.load.spritesheet('goomba', 'assets/goomba.png', 16, 16);
+			this.load.spritesheet('pengu', 'assets/pengu.png', 32, 32);
 			this.load.spritesheet('mario', 'assets/crash.png', 42, 53);
 			this.load.spritesheet('number', 'assets/number.png', 16, 16);
 			this.load.spritesheet('coin', 'assets/coin.png', 9, 10);
 			this.load.spritesheet('maskbox', 'assets/maskbox.png', 16, 16);
 			this.load.spritesheet('followingmask', 'assets/fmask.png', 43, 70);
 			this.load.spritesheet('pcrystal', 'assets/purplecrystal.png', 8, 31);
+			this.load.image('telepipe', 'assets/telepipe.png');
 			this.load.image('lifei', 'assets/lifeicon.png');
 			this.load.image('fruiti', 'assets/fruiticon.png');
 			this.load.image('boxi', 'assets/boxicon.png');
 			this.load.image('tfp', 'assets/tfp.png');
+			this.load.image('PauseDim', 'assets/logo.png');
+			this.load.image('pauseBT', 'assets/pauseBT.png');
 			
 			this.load.spritesheet('buttonL', 'assets/buttons/buttonL.png', 52, 52);
 			this.load.spritesheet('buttonR', 'assets/buttons/buttonR.png', 52, 52);
+			this.load.spritesheet('buttonD', 'assets/buttons/buttonD.png', 52, 52);
 			this.load.spritesheet('buttonJ', 'assets/buttons/buttonX.png', 52, 52);
 			
 			this.load.audio('death', 'audio/cdeath.mp3');
@@ -88,8 +97,6 @@ body {
 			Steps = game.add.audio('steps');
 			Stomp = game.add.audio('stomp');
 			Level1 = game.add.audio('level1');
-			
-			Level1.play('', 0, 1, true);
 			
 			Phaser.Canvas.setImageRenderingCrisp(game.canvas)
 			game.scale.pageAlignHorizontally = true;
@@ -138,6 +145,15 @@ body {
 			//  The purple crystals will need to be offset by 6px to put them back in the middle of the grid
 			pcrystals.setAll('x', 4, false, false, 1);
 
+			pengus = game.add.group();
+			pengus.enableBody = true;
+			map.createFromTiles(11, null, 'pengu', 'stuff', pengus);
+			pengus.callAll('animations.add', 'animations', 'penguspin', [ 0, 1 ], 10, true);
+			pengus.callAll('animations.play', 'animations', 'penguspin');
+			pengus.setAll('body.bounce.x', 1);
+			pengus.setAll('body.velocity.x', -60);
+			pengus.setAll('body.gravity.y', 500);
+			
 			goombas = game.add.group();
 			goombas.enableBody = true;
 			map.createFromTiles(1, null, 'goomba', 'stuff', goombas);
@@ -152,6 +168,11 @@ body {
 			map.createFromTiles(19, null, 'maskbox', 'stuff', maskboxes);
 			maskboxes.callAll('animations.add', 'animations', 'boxblink', [ 0, 1, 2, 3 ], 10, true);
 			maskboxes.setAll('body.immovable',true);
+			
+			telepipes = game.add.group();
+			telepipes.enableBody = true;
+			map.createFromTiles(35, null, 'telepipe', 'stuff', telepipes);
+			telepipes.setAll('body.immovable',true);
 			
 			fmask = game.add.sprite(0, -20, 'followingmask');
 			fmask.animations.add('levitateR', [ 0, 1, 2, 1], 2, true);
@@ -181,7 +202,66 @@ body {
 			TFP.fixedToCamera = true;
 			TFP.visible = false;
 			
-			if (!game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
+			PState = game.add.text(140, 90, "PAUSED", { fontSize: "80px", fill: "#a00000"});
+			PState.setShadow(1, 1, 'rgba(0,0,0,0.8)', 2);
+			PState.fixedToCamera=true;
+			PState.visible = false;
+			
+			Pmess = game.add.text(165, 170, "Click anywhere in the game to unpause.", { fontSize: "15px", fill: "#fff"});
+			Pmess.setShadow(1, 1, 'rgba(0,0,0,0.8)', 2);
+			Pmess.fixedToCamera=true;
+			Pmess.visible = false;
+			
+			player.visible=false;
+			isDead=true;
+			
+			//************* PAUSE BUTTON *************\\
+			pause_label = game.add.sprite( Wwidth-82, 1, 'pauseBT');
+			pause_label.fixedToCamera = true;
+			
+			//************* START SCREEN *************\\
+			this.InfodimBack = this.add.sprite( 0, 0, 'PauseDim');
+			
+			DevInfo = game.add.text(90, 253, "This game is also playable in Smartphones and Tablets.", { fontSize: "15px", fill: "#fff"});
+			
+			pl1_button = game.add.sprite(205, 180, 'pl1');
+			pl1_button.animations.add('pl1_flash', [ 0, 1], 2, true);
+			pl1_button.animations.play('pl1_flash');
+			pl1_button.inputEnabled = true;
+			pl1_button.events.onInputUp.add(function () {
+				Fruit.play();
+				OK = true;
+				pause_label.inputEnabled = true;
+				DevInfo.destroy();
+				if (!game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
+			});
+			
+			pause_label.events.onInputUp.add(function () {
+				// When the paus button is pressed, we pause the game
+				if( game.paused == false && this.ChoseDif != false ){
+					game.paused = true;
+					Level1.pause();
+					PState.visible = true;
+					Pmess.visible = true;
+				}
+			});
+			
+			//Click Listener
+			game.input.onDown.add(unpause, self);
+			
+			function unpause(event){
+				// Only act if paused
+				if ( this.InfodimBack != null ){
+					this.InfodimBack.destroy();
+				}
+				if(game.paused && !isDead){
+					PState.visible=false;
+					Pmess.visible=false;
+					// Unpause the game
+					game.paused = false;
+					Level1.resume();
+				}
+			};
 			
 		}
 		
@@ -195,13 +275,17 @@ body {
 			buttonL.events.onInputDown.add(function(){leftpress=true;});
 			buttonL.events.onInputUp.add(function(){leftpress=false;});
 			buttonL.fixedToCamera = true;
-			buttonR = game.add.button(62, 40, 'buttonR', null, this, 0, 1, 0, 1);
+			buttonR = game.add.button(75, 40, 'buttonR', null, this, 0, 1, 0, 1);
 			//buttonR.events.onInputOver.add(function(){rightpress=true;});
 			//buttonR.events.onInputOut.add(function(){rightpress=false;});
 			buttonR.events.onInputDown.add(function(){rightpress=true;});
 			buttonR.events.onInputUp.add(function(){rightpress=false;});
 			buttonR.fixedToCamera = true;
-			buttonJ = game.add.button(543, 40, 'buttonJ', null, this, 0, 1, 0, 1);
+			buttonD = game.add.button(40, 80, 'buttonD', null, this, 0, 1, 0, 1);
+			buttonD.events.onInputDown.add(function(){downpress=true;});
+			buttonD.events.onInputUp.add(function(){downpress=false;});
+			buttonD.fixedToCamera = true;
+			buttonJ = game.add.button(Wwidth-57, 40, 'buttonJ', null, this, 0, 1, 0, 1);
 			//buttonJ.events.onInputOver.add(function(){jumppress=true;});
 			//buttonJ.events.onInputOut.add(function(){jumppress=false;});
 			buttonJ.events.onInputDown.add(function(){jumppress=true;});
@@ -212,8 +296,11 @@ body {
 		function update() {
 			game.physics.arcade.collide(player, layer);
 			game.physics.arcade.collide(goombas, layer);
+			game.physics.arcade.collide(pengus, layer);
 			game.physics.arcade.overlap(player, goombas, goombaOverlap);
+			game.physics.arcade.overlap(player, pengus, penguOverlap);
 			game.physics.arcade.collide(player, maskboxes, maskboxOverlap);
+			game.physics.arcade.collide(player, telepipes, telepipeOverlap);
 			game.physics.arcade.overlap(player, coins, coinOverlap);
 			game.physics.arcade.overlap(player, pcrystals, pcOverlap);
 
@@ -261,6 +348,22 @@ body {
 						player.frame = 79;
 				}
 			}
+			
+			if( OK == false && this.InfodimBack == null ){
+				this.InfodimBack.visible = true;
+			}
+            else if( OK == true ){
+				this.InfodimBack.visible = false;
+				pl1_button.destroy();
+				Level1.resume();
+				OK = false;
+				isDead=false; 
+				player.visible=true;
+				player.x = 51;
+				player.y = game.world.height - 112;
+				Level1.play('', 0, 1, true);
+			}
+			
 		}
 		
 		function updateScoreBoard(){
@@ -306,6 +409,17 @@ body {
 				//maskbox.body.enable = false;
 			}
 			if (jumppress && player.body.touching.down || player.body.touching.down && cursors.up.isDown){
+				player.body.velocity.y = -193;
+				Jump.play();
+			}	
+		}
+		
+		function telepipeOverlap(player, telepipe) {
+			if (downpress && player.body.touching.down || player.body.touching.down && cursors.down.isDown) {
+				player.x = 1124;
+				player.y = 40;
+			}
+			else if (jumppress && player.body.touching.down || player.body.touching.down && cursors.up.isDown){
 				player.body.velocity.y = -193;
 				Jump.play();
 			}	
@@ -397,6 +511,58 @@ body {
 					else
 						player.frame = 68;
 					game.time.events.add(Phaser.Timer.SECOND, function() { goomba.kill(); });
+				}
+			}
+		}
+		
+		function penguOverlap(player, pengu) {
+			if (isDead == false){
+				if (masked == false){
+					isDead = true;
+					Death.play();
+					lifecount--;
+					if (player.goesRight)
+						player.animations.play('dieRight');
+					else
+						player.animations.play('dieLeft');
+					player.body.velocity.x = 0;
+					player.body.gravity.y = 0;
+					player.body.velocity.y = -5;
+					//player.frame = 6;
+					//player.body.enable = false;
+					game.time.events.add(Phaser.Timer.SECOND * 3, function() {
+						if (lifecount > 0){
+							updateScoreBoard();
+							player.goesRight = true;
+							player.x = 51;
+							player.y = game.world.height - 112;
+							player.animations.stop();
+							player.body.gravity.y = 370;
+							isDead = false;
+						}
+						else{
+							updateScoreBoard();
+							TFP.visible = true;
+							game.paused = true;
+						}
+					});
+				}
+				else if (masked == true){
+					pengu.animations.stop();
+					pengu.frame = 4;
+					pengu.body.enable = false;
+					player.body.velocity.y = -200;
+					masked = false;
+					fmask.animations.stop();
+					fmask.kill();
+					blink();
+					blinktimes = 0;
+					MaskOff.play();
+					if (player.goesRight)
+						player.frame = 61;
+					else
+						player.frame = 68;
+					game.time.events.add(Phaser.Timer.SECOND, function() { pengu.kill(); });
 				}
 			}
 		}
