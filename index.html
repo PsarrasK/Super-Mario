@@ -263,9 +263,18 @@ body {
 			};
 			
 			game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-			game.input.onDown.add(function(){game.scale.startFullScreen(false);}, this);
+			game.input.onDown.add(gofull, this);
 			if (game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
 			
+		}
+		
+		function gofull() {
+		//	if (game.scale.isFullScreen){
+		//		game.scale.stopFullScreen();
+		//   	}
+		//   	else{
+				game.scale.startFullScreen(false);
+		//   	}
 		}
 		
 		function mobile() { 
