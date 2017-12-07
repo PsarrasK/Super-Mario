@@ -86,8 +86,6 @@ body {
 
 		function create() {
 			
-			if (!game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
-			
 			Death = game.add.audio('death');
 			Fruit = game.add.audio('fruit');
 			Jump = game.add.audio('jump');
@@ -263,6 +261,8 @@ body {
 					Level1.resume();
 				}
 			};
+			
+			if (!game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
 			
 		}
 		
