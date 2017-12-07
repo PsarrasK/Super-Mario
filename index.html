@@ -262,7 +262,8 @@ body {
 				}
 			};
 			
-			if (!game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
+			game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+			if (game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
 			
 		}
 		
