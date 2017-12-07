@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <style>
 body {
-    	width: 100%;
 	margin: 0;
 	padding: 0;
 	background-color: #000;
@@ -262,28 +261,12 @@ body {
 					Level1.resume();
 				}
 			};
-			
-			//game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
-			//game.scale.fullScreenScaleMode = Phaser.ScaleManager.EXACT_FIT;
-			//game.input.onDown.add(gofull, this);
 			if (!game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
-			
 		}
-		
-		/*
-		function gofull() {
-		//	if (game.scale.isFullScreen){
-		//		game.scale.stopFullScreen();
-		//   	}
-		//   	else{
-				game.scale.startFullScreen(false);
-		//   	}
-		}
-		*/
 		
 		function mobile() { 
 			mobilecheck = true;
-			game.scale.startFullScreen();
+			game.scale.startFullScreen(true);
 			
 			buttonL = game.add.button(5, 40, 'buttonL', null, this, 0, 1, 0, 1);
 			//buttonL.events.onInputOver.add(function(){leftpress=true;});
