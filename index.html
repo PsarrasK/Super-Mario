@@ -261,7 +261,7 @@ body {
 					Level1.resume();
 				}
 			};
-			if (game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
+			if (!game.device.desktop && mobilecheck == false){ mobile(); } //go fullscreen and add buttons on mobile devices
 		}
 		
 		function mobile() { 
