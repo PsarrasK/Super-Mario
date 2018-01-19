@@ -50,7 +50,17 @@
 Ως ένα επιπλέον στοιχείο προστέθηκε υποστήριξη για κινητά και tablets καθώς το παιχνίδι αναγνωρίζει πλέον αν τρέχει σε κάτι από τα δύο και εμφανίζει κουμπιά.
 
 ## Screenshots
+Κάντε hover με το ποντίκι για να εμφανιστεί η περιγραφή των εικόνων
 
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr1.png "Αρχική οθόνη - Μενού")
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr2.png "Αρχή πίστας - Αρχική θέση")
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr2smart.png "Αρχή πίστας - Αρχική θέση - Υποστήριξη Smartphones και Tablets")
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr3.png "Έχοντας πάρει τη μάσκα - PowerUp")
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr4.png "Σημείο του Teleport")
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr5.png "Στιγμιότυπο Gameplay")
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr6.png "Στιγμιότυπο Gameplay PAUSED")
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr7.png "Στιγμιότυπο Gameplay YOU WIN!")
+![alt text](https://github.com/PsarrasK/Super-Mario/blob/master/screenshots/scr8.png "Στιγμιότυπο Gameplay GAME OVER")
 
 ## Συμπεράσματα
 
